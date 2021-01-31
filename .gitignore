@@ -255,3 +255,8 @@ dmypy.json
 cython_debug/
 
 data/
+*.gro
+*.top
+*.itp
+runs/
+*.xvg
