@@ -1,0 +1,72 @@
+; molecular dynamics parameters for umbrella sampling simulation 
+define      = -DPOSRES_B
+
+; Run parameters
+integrator  = md
+dt          = 0.001
+tinit       = 0
+nsteps      = 500000   ; 0.5 ns
+nstcomm     = 100
+
+; Output parameters
+nstxout             = 50000     ; every 100 ps
+nstvout             = 50000
+nstfout             = 5000
+nstxout-compressed  = 5000      ; every 10 ps
+nstenergy           = 5000
+
+; Bond parameters
+constraint_algorithm    = lincs
+constraints             = all-bonds
+continuation            = no
+
+; Single-range cutoff scheme
+cutoff-scheme = Verlet
+nstlist       = 5
+ns-type       = grid
+rlist         = 1.4
+rcoulomb      = 1.4
+rvdw          = 1.4
+
+; PME electrostatics parameters
+coulombtype     = PME
+fourierspacing  = 0.12
+fourier-nx      = 0
+fourier-ny      = 0
+fourier-nz      = 0
+pme-order       = 4
+ewald-rtol      = 1e-5
+
+; Berendsen temperature coupling is on in two groups
+tcoupl      = V-rescale
+tc-grps     = Protein
+tau-t       = 0.5
+ref-t       = 310
+
+; Pressure coupling is on
+pcoupl          = no
+
+; Generate velocities for initial configuration.
+gen-vel     = yes
+gen-temp    = 310
+gen-seed    = -1
+
+; Periodic boundary conditions are on in all directions
+pbc     = xyz
+
+; Long-range dispersion correction
+DispCorr    = EnerPres
+
+; Pull code
+pull                    = yes
+pull-ngroups            = 2
+pull-ncoords            = 1
+pull-group1-name        = chain_A
+pull-group2-name        = chain_B
+pull-coord1-type        = umbrella      ; harmonic biasing force
+pull-coord1-geometry    = distance      ; simple distance increase
+pull-coord1-groups      = 1 2
+pull-coord1-dim         = N N Y
+pull-coord1-rate        = 0.0           ; restrain in place, we do not want configuration to move along z axis
+pull-coord1-k           = 2000          ; kJ mol^-1 nm^-2
+pull-coord1-start       = yes           ; define initial COM distance > 0

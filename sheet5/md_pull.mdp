@@ -1,0 +1,72 @@
+; molecular dynamics parameters for stretching simulation 
+define      = -DPOSRES_B
+
+; Run parameters
+integrator  = md
+dt          = 0.001
+tinit       = 0
+nsteps      = 50000    ; 50 ps
+nstcomm     = 100
+
+; Output parameters
+nstxout             = 5000      ; every 10 ps
+nstvout             = 5000 
+nstfout             = 500
+nstxout-compressed  = 500       ; every 1 ps
+nstenergy           = 500
+
+; Bond parameters
+constraint_algorithm    = lincs
+constraints             = all-bonds
+continuation            = no
+
+; Single-range cutoff scheme
+cutoff-scheme   = Verlet
+nstlist         = 5
+ns-type         = grid 
+rlist           = 1.4
+rcoulomb        = 1.4
+rvdw            = 1.4
+
+; PME electrostatics parameters
+coulombtype     = PME
+fourierspacing  = 0.12
+fourier-nx      = 0
+fourier-ny      = 0
+fourier-nz      = 0
+pme-order       = 4
+ewald-rtol      = 1e-5
+
+; Berendsen temperature coupling is on in two groups.
+tcoupl      = V-rescale
+tc-grps     = Protein
+tau-t       = 0.5      
+ref-t       = 310
+
+; Pressure coupling is off.
+pcoupl          = no
+
+; Generate velocities for initial conformation.
+gen-vel     = yes
+gen-temp    = 310
+gen-seed    = -1
+
+; Periodic boundary conditions are on in all directions.
+pbc     = xyz
+
+; Long-range dispersion correction
+DispCorr    = EnerPres
+
+; Pull code
+pull                    = yes           ; tell preprocessor to read setting for COM pulling
+pull-ngroups            = 2             ; two groups defining one reaction coordinate = COM distance between groups
+pull-ncoords            = 1             ; only one reaction coordinate (1D free energy calculation)
+pull-group1-name        = chain_A       ; name of first group (see index file)
+pull-group2-name        = chain_B       ; name of second group (see index file)
+pull-coord1-type        = umbrella      ; harmonic potential for pulling (NOT umbrella sampling!)
+pull-coord1-geometry    = distance      ; simple distance increase
+pull-coord1-groups      = 1 2           ; groups 1 (chain_A) and 2 (chain_B) define reaction coordinate
+pull-coord1-dim         = N N Y         ; pull along z
+pull-coord1-rate        = 0.05          ; rate at which imaginary spring attached to pull groups is elongated [nm/ps]; also called constant velocity pulling
+pull-coord1-k           = 2000          ; spring force constant [kJ mol^-1 nm^-2]
+pull-coord1-start       = yes           ; initial COM distance = reference distance for 1st frame
