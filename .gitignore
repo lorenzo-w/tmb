@@ -254,9 +254,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-data/
+# TMB-specific
 *.gro
 *.top
 *.itp
-runs/
-*.xvg
+*.ndx
+*.tpr
+*.edr
+*.trr
